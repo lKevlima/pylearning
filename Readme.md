@@ -1,0 +1,1 @@
+Esse projeto tem como função ensinar a linguagem de programação Python.
