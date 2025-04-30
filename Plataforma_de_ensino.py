@@ -41,21 +41,25 @@ def validar_email(email):
 
 def calcular_media_idades(usuarios):
     if not usuarios:
+        print("")
         print("Nenhum usuário cadastrado para calcular a média.")
         return
     soma_idades = sum(usuario["Idade"] for usuario in usuarios)
     media_idades = soma_idades / len(usuarios)
+    print("========== Média das idades ==========")
     print(f"\nTotal de usuários cadastrados: {len(usuarios)}")
     print(f"Soma das idades: {soma_idades}")
     print(f"Média das idades: {media_idades:.2f}")
-
+    print("======================================")  # Espaço pra ficar bonito
 
 # Função para calcular a média das notas de desempenho e listar logins
+
+
 def calcular_media_notas(usuarios):
     if not usuarios:
         print("Nenhum usuário cadastrado para calcular a média de notas.")
         return
-
+    print("========== Média das notas ==========")
     print("\nLista de usuários cadastrados (logins):")
     for usuario in usuarios:
         print(f"- {usuario['Email']}")
@@ -77,35 +81,59 @@ def calcular_media_notas(usuarios):
         print(f"Total de notas registradas: {qtd_notas}")
         print(f"Soma de todas as notas: {total_notas:.2f}")
         print(f"Média geral das notas: {media_notas:.2f}")
+        print("=====================================")
     else:
         print("\nNenhuma nota de desempenho registrada.")
+        print("=====================================")
 
 
 # Função para consultar e alterar os dados do usuário
 def consultar_alterar_usuario(usuarios, chave_secreta):
+    print("============ Consulte ou altere dados ============")
     email = input("Digite o e-mail do usuário: ").strip()
+
     for usuario in usuarios:
         if usuario["Email"] == email:
-            print(f"Nome: {usuario['Nome']}")
+            print(f"\nNome: {usuario['Nome']}")
             print(f"Idade: {usuario['Idade']}")
             print(f"E-mail: {usuario['Email']}")
             print(f"Tipo de usuário: {usuario['Tipo']}")
             print(f"Nível de conhecimento: {usuario['Nivel De Conhecimento']}")
-            print(f"Desempenho: {usuario['Desempenho']}")
+            print(f"Desempenho: {usuario['Desempenho']}\n")
+
             acao = input("Deseja alterar os dados? (s/n): ").strip().lower()
             if acao == "s":
-                usuario["Nome"] = input(
-                    f"Nome atual: {usuario['Nome']}. Digite o seu novo nome: ").strip()
-                usuario["Email"] = input(
-                    f"E-mail atual: {usuario['Email']}. Digite o seu novo e-mail: ").strip()
-                usuario["Idade"] = int(
-                    input(f"Idade atual: {usuario['Idade']}. Digite uma nova idade: "))
-                usuario["Nivel De Conhecimento"] = input(
-                    f"Nível atual: {usuario['Nivel De Conhecimento']}. Digite o seu novo nível: ").strip()
+                novo_nome = input(f"Nome atual: {usuario['Nome']}. Digite o novo nome: ").strip()
+                while True:
+                    novo_email = input(f"E-mail atual: {usuario['Email']}. Digite o novo e-mail: ").strip()
+                    if not validar_email(novo_email):
+                        print("Erro: O e-mail deve conter '@' e '.com'.")
+                        continue
+                    elif any(user["Email"] == novo_email and user != usuario for user in usuarios):
+                        print("Erro: E-mail já cadastrado.")
+                        continue
+                    break
+
+                try:
+                    nova_idade = int(input(f"Idade atual: {usuario['Idade']}. Digite a nova idade: "))
+                except ValueError:
+                    print("Erro: Idade inválida. Digite um número inteiro.")
+                    return
+
+                novo_nivel = input(f"Nível atual: {usuario['Nivel De Conhecimento']}. Digite o novo nível: ").strip()
+
+                # Atualizando os dados
+                usuario["Nome"] = novo_nome
+                usuario["Email"] = novo_email
+                usuario["Idade"] = nova_idade
+                usuario["Nivel De Conhecimento"] = novo_nivel
+
                 salvar_dados(usuarios, chave_secreta)
                 print("Dados atualizados com sucesso.")
             return
+    
     print("Usuário não encontrado.")
+
 
 
 # Função para inserir os dados de desempenho do usuário
