@@ -457,10 +457,24 @@ def escolher_disciplina(usuario, usuarios_cadastrados, chave_secreta):
 def main():
     usuarios_cadastrados, chave_secreta = carregar_dados()
     fernet = Fernet(chave_secreta)
+
     while True:
-        print("\n========== Menu ==========")
+        print("\n========== Bem-vindo! ==========")
         print("1 - Login")
         print("2 - Cadastro")
+        acao = input("Escolha uma opção: ").strip()
+
+        if acao == "1":
+            usuario = login(usuarios_cadastrados, fernet)
+            if usuario:
+                menu(usuario, usuarios_cadastrados, fernet)
+        elif acao == "2":
+            cadastrar_usuario(usuarios_cadastrados, chave_secreta, fernet)
+
+
+def menu(usuario, usuarios_cadastrados, fernet):
+    while True:
+        print("1 - Questionários")
         print("3 - Consultar/Alterar Dados")
         print("4 - Inserir Desempenho")
         print("5 - Calcular Média de Idades")
@@ -469,16 +483,11 @@ def main():
         acao = input("Escolha uma opção: ").strip()
 
         if acao == "1":
-            usuario = login(usuarios_cadastrados, fernet)
-            if usuario:
-                escolher_disciplina(
-                    usuario, usuarios_cadastrados, chave_secreta)
-        elif acao == "2":
-            cadastrar_usuario(usuarios_cadastrados, fernet, chave_secreta)
+            escolher_disciplina(usuario, usuarios_cadastrados, fernet)
         elif acao == "3":
-            consultar_alterar_usuario(usuarios_cadastrados, chave_secreta)
+            consultar_alterar_usuario(usuarios_cadastrados, fernet)
         elif acao == "4":
-            inserir_desempenho(usuarios_cadastrados, chave_secreta)
+            inserir_desempenho(usuarios_cadastrados, fernet)
         elif acao == "5":
             calcular_media_idades(usuarios_cadastrados)
         elif acao == "6":
