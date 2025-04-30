@@ -479,7 +479,7 @@ def menu(usuario, usuarios_cadastrados, fernet):
         print("4 - Inserir Desempenho")
         print("5 - Calcular Média de Idades")
         print("6 - Calcular Média de Notas")
-        print("7 - Sair")
+        print("0 - Sair")
         acao = input("Escolha uma opção: ").strip()
 
         if acao == "1":
@@ -492,7 +492,7 @@ def menu(usuario, usuarios_cadastrados, fernet):
             calcular_media_idades(usuarios_cadastrados)
         elif acao == "6":
             calcular_media_notas(usuarios_cadastrados)
-        elif acao == "7":
+        elif acao == "0":
             print("Saindo...")
             break
         else:
