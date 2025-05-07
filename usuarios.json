@@ -1,64 +1,20 @@
 {
-    "usuarios": [
-        {
-            "Nome": "Koll",
-            "Email": "K@gmail.com",
-            "Idade": 22,
-            "Nivel De Conhecimento": "int",
-            "Senha": "gAAAAABn6rU1ChvCBO4y2OCV8RnIiov1fDsS8E2sbSFktEm_Zvo3tgI5B-M2zIXxXdjiSs1C--GmxgIrovo6gL75FgtUDVcQ3g==",
-            "Tipo": "Administrador",
-            "Desempenho": [
-                25.0,
-                10.0,
-                4
-            ]
-        },
-        {
-            "Nome": "Koli",
-            "Email": "Koli@gmail.com",
-            "Idade": 18,
-            "Nivel De Conhecimento": "iniciante",
-            "Senha": "gAAAAABn6rlS5NeBFm1uWY4PNT8fHEmHsWw2z6y1UFuMftOgJDBYQDDIXR5QkyuPvTZNWrH3f5112S89qpeR9wihFEhc7sckqw==",
-            "Tipo": "Administrador",
-            "Desempenho": [
-                5
-            ]
-        },
-        {
-            "Nome": "ca@gmail.com",
-            "Email": "ca@gmail.com",
-            "Idade": 20,
-            "Nivel De Conhecimento": "iniciante",
-            "Senha": "gAAAAABn7oV_ZE9pWO52-0dY1fBiE88rAFIypgdsMEQNiD95H083lB37-G6GIsw8XRYimnVSvjYsd1hzm-jimq4drQ1IwV8t5g==",
-            "Tipo": "Comum",
-            "Desempenho": [
-                2
-            ]
-        },
-        {
-            "Nome": "Kevin",
-            "Email": "k@gmail.com",
-            "Idade": 18,
-            "Nivel De Conhecimento": "iniciante",
-            "Senha": "gAAAAABn9TjGIUgyCLqTr8Me79vP_5EugtZTOa_l-M-HBhNK77YNdL_AKD0LJH-WOavGPW9IS4i3mKp2gaLb3RCImgbTAqCdYg==",
-            "Tipo": "Comum",
-            "Desempenho": [
-                3
-            ]
-        },
-        {
-            "Nome": "Koli",
-            "Email": "koli@gmail.com",
-            "Idade": 19,
-            "Nivel De Conhecimento": "iniciante",
-            "Senha": "gAAAAABoD-yYPMgg2MUQX4Z1iGx1MANo7GX2PqU2LXGQKZgu45RLVyfYLhfDxaTv0T9_dyu04X11tNZ2q4JKEjE6DaBUXp1VKw==",
-            "Tipo": "Comum",
-            "Desempenho": [
-                2,
-                2,
-                4
-            ]
-        }
-    ],
+    "usuarios": {
+        "Nome": "Koi",
+        "Email": "K@gmail.com",
+        "Idade": 26,
+        "Nivel De Conhecimento": "Fuck",
+        "Senha": "gAAAAABn6rU1ChvCBO4y2OCV8RnIiov1fDsS8E2sbSFktEm_Zvo3tgI5B-M2zIXxXdjiSs1C--GmxgIrovo6gL75FgtUDVcQ3g==",
+        "Tipo": "Administrador",
+        "Desempenho": [
+            25.0,
+            10.0,
+            4,
+            10.1,
+            5.0,
+            10.0,
+            1.0
+        ]
+    },
     "chave_secreta": "1MfoACBOrhdK5PBifu4hGGp9RLS5m1Si3fAQ67ffc7E="
 }
