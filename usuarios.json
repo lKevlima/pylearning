@@ -1,15 +1,16 @@
 {
     "usuarios": [
         {
-            "Nome": "Kevin ",
+            "Nome": "Koll",
             "Email": "K@gmail.com",
-            "Idade": 20,
-            "Nivel De Conhecimento": "iniciante",
+            "Idade": 22,
+            "Nivel De Conhecimento": "int",
             "Senha": "gAAAAABn6rU1ChvCBO4y2OCV8RnIiov1fDsS8E2sbSFktEm_Zvo3tgI5B-M2zIXxXdjiSs1C--GmxgIrovo6gL75FgtUDVcQ3g==",
             "Tipo": "Administrador",
             "Desempenho": [
                 25.0,
-                10.0
+                10.0,
+                4
             ]
         },
         {

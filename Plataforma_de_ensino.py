@@ -1,126 +1,137 @@
-# importando json e criptografia
+# Importando as bibliotecas json e Fernet para criptografia
 import json
 from cryptography.fernet import Fernet
 
-
 # Função para salvar os dados no arquivo JSON
 def salvar_dados(dados, chave_secreta):
-    salvar_dados = {"usuarios": dados, "chave_secreta": chave_secreta.decode()}
-    with open("usuarios.json", "w") as arquivo:
-        json.dump(salvar_dados, arquivo, indent=4)
+    salvar_dados = {
+        "usuarios": dados,
+        "chave_secreta": chave_secreta.decode()  # Converto a chave de bytes para string (base64) para poder salvar no JSON
+    }
+    with open("usuarios.json", "w") as arquivo:  # Abro o arquivo no modo de escrita ("w")
+        json.dump(salvar_dados, arquivo, indent=4)  # Salvo os dados no JSON com indentação para melhor leitura
 
 
 # Função para carregar os dados do arquivo JSON
 def carregar_dados():
     try:
+        # Tenta abrir o arquivo no modo de leitura ("r")
         with open("usuarios.json", "r") as arquivo:
-            dados = json.load(arquivo)
-            if "usuarios" in dados and "chave_secreta" in dados:
-                chave_secreta = dados["chave_secreta"].encode()
-                return dados["usuarios"], chave_secreta
+            dados = json.load(arquivo)  # Carrega os dados do JSON como dicionário    
+            if "usuarios" in dados and "chave_secreta" in dados: # Verifica se as chaves esperadas estão presentes
+                chave_secreta = dados["chave_secreta"].encode()  # Converte a chave de string base64 para bytes
+                return dados["usuarios"], chave_secreta  # Retorna os usuários e a chave
             else:
+                # Se o formato do JSON estiver incorreto, levanta um erro
                 raise ValueError("Estrutura do arquivo inválida")
+    # Se o arquivo não existir, estiver corrompido ou com estrutura errada
     except (FileNotFoundError, json.JSONDecodeError, ValueError):
-        chave_secreta = Fernet.generate_key()
-        return [], chave_secreta
+        chave_secreta = Fernet.generate_key()  # Gera nova chave de criptografia (em bytes)
+        return [], chave_secreta  # Retorna lista vazia de usuários e a nova chave
+# Correção ! As linhas 24, 26, 28, 29 e 30 foram criadas com o intuito de prosseguir caso o Json esteja em branco,
+# mas se o caso for outro irá apagar todos os dados sem nenhum tipo de backup
 
-# Função para validar a senha
-
-
+# Função para validar a senha   
 def validar_senha(senha):
     return len(senha) >= 6 and any(char.isupper() for char in senha) and any(char.isdigit() for char in senha)
 
+
 # Função para validar email
-
-
 def validar_email(email):
     return "@" in email and ".com" in email
 
+
 # Função para calcular média de idade dos usuários
-
-
 def calcular_media_idades(usuarios):
-    if not usuarios:
-        print("")
+    if not usuarios: # Caso não tenha nenhum usuário cadastrado
+        print("") # Espaço pra ficar bonito 
         print("Nenhum usuário cadastrado para calcular a média.")
-        return
-    soma_idades = sum(usuario["Idade"] for usuario in usuarios)
-    media_idades = soma_idades / len(usuarios)
+        return # Cancela o processo da função
     print("========== Média das idades ==========")
-    print(f"\nTotal de usuários cadastrados: {len(usuarios)}")
+    print("\nLista de usuários cadastrados:")
+    for usuario in usuarios: # Para cada usuário na lista do Json
+        print(f"- {usuario['Email']}") #Imprima o Email de cada um
+
+    soma_idades = sum(usuario["Idade"] for usuario in usuarios) # Soma as idades de todos os usuários
+    media_idades = soma_idades / len(usuarios) # Utiliza a soma e divide pela quantidade de usuários 
+    print(f"\nTotal de usuários cadastrados: {len(usuarios)}") 
     print(f"Soma das idades: {soma_idades}")
     print(f"Média das idades: {media_idades:.2f}")
     print("======================================")  # Espaço pra ficar bonito
 
+
 # Função para calcular a média das notas de desempenho e listar logins
-
-
 def calcular_media_notas(usuarios):
-    if not usuarios:
+    if not usuarios: # Se não houver usuário registrado
         print("Nenhum usuário cadastrado para calcular a média de notas.")
-        return
+        return # Cancela o processo da função 
     print("========== Média das notas ==========")
-    print("\nLista de usuários cadastrados (logins):")
-    for usuario in usuarios:
-        print(f"- {usuario['Email']}")
+    print("\nLista de usuários cadastrados:")
+    for usuario in usuarios: # Para cada usuário na lista do Json
+        print(f"- {usuario['Email']}") #Imprima o Email de cada um
 
-    total_notas = 0
-    qtd_notas = 0
-    usuarios_com_notas = 0
+    total_notas = 0 # Variável local para o total das notas
+    qtd_notas = 0 # "" "" "" a quantidade das notas
+    usuarios_com_notas = 0 # Quantidade de usuários com notas
 
     for usuario in usuarios:
         if usuario["Desempenho"]:  # Verifica se há notas registradas
-            total_notas += sum(usuario["Desempenho"])
-            qtd_notas += len(usuario["Desempenho"])
-            usuarios_com_notas += 1
+            total_notas += sum(usuario["Desempenho"]) # Soma todas as notas
+            qtd_notas += len(usuario["Desempenho"]) # Quantidade de notas na lista do Json
+            usuarios_com_notas += 1 # Soma +1 pra cada usuário encontrado na lista
 
-    if qtd_notas > 0:
-        # A soma das notas dividido pelo total de notas
-        media_notas = total_notas / qtd_notas
+    if qtd_notas > 0: # Se a quantidade das notas for maior que 0
+        media_notas = total_notas / qtd_notas # A soma das notas dividido pelo total de notas
         print(f"\nTotal de usuários com notas: {usuarios_com_notas}")
         print(f"Total de notas registradas: {qtd_notas}")
-        print(f"Soma de todas as notas: {total_notas:.2f}")
+        print(f"Soma de todas as notas: {total_notas:.2f}") # :.2f Significa limitar o float a duas casas decimais
         print(f"Média geral das notas: {media_notas:.2f}")
-        print("=====================================")
+        print("=====================================") # Pra ficar bonito tb. Confia
     else:
-        print("\nNenhuma nota de desempenho registrada.")
+        print("\nNenhuma nota de desempenho registrada.") 
         print("=====================================")
 
 
 # Função para consultar e alterar os dados do usuário
-def consultar_alterar_usuario(usuarios, chave_secreta):
+def consultar_alterar_usuario(usuarios, chave_secreta): # Parâmetros que servem para buscar os usuarios e salvar a senha criptografada
     print("============ Consulte ou altere dados ============")
-    email = input("Digite o e-mail do usuário: ").strip()
+    email = input("Digite o e-mail do usuário: ").strip() 
 
     for usuario in usuarios:
-        if usuario["Email"] == email:
-            print(f"\nNome: {usuario['Nome']}")
+        if usuario["Email"] == email: # Se o E-mail digitado for igual a qualquer um que esteja registrado
+            print(f"\nNome: {usuario['Nome']}") 
             print(f"Idade: {usuario['Idade']}")
             print(f"E-mail: {usuario['Email']}")
             print(f"Tipo de usuário: {usuario['Tipo']}")
             print(f"Nível de conhecimento: {usuario['Nivel De Conhecimento']}")
             print(f"Desempenho: {usuario['Desempenho']}\n")
-
-            acao = input("Deseja alterar os dados? (s/n): ").strip().lower()
+            # A função strip() é usada para remover espaços em branco extras. lower() transforma todos os caracteres da string em minúsculas.
+            acao = input("Deseja alterar os dados? (s/n): ").strip().lower() 
             if acao == "s":
-                novo_nome = input(f"Nome atual: {usuario['Nome']}. Digite o novo nome: ").strip()
+                novo_nome = input(f"Nome atual: {usuario['Nome']}. Digite o novo nome: ").strip() # Salvar o novo nome na váriavel
                 while True:
-                    novo_email = input(f"E-mail atual: {usuario['Email']}. Digite o novo e-mail: ").strip()
+                    novo_email = input(f"E-mail atual: {usuario['Email']}. Digite o novo e-mail: ").strip() # Salvar o novo e-mail na váriavel
                     if not validar_email(novo_email):
                         print("Erro: O e-mail deve conter '@' e '.com'.")
-                        continue
-                    elif any(user["Email"] == novo_email and user != usuario for user in usuarios):
+                        continue # Se o e-mail estiver correto, segue o baile
+                    elif any(user["Email"] == novo_email and user != usuario for user in usuarios): 
+                    # any(...) retorna True se alguma condição dentro da expressão for verdadeira.
+                    # "user" representa cada dicionário (usuário) da lista "usuarios". É uma variável temporária usada apenas nessa verificação.
+                    # user["Email"] == novo_email → Verifica se o e-mail do usuário atual é igual ao novo e-mail digitado.
+                    # user != usuario → Garante que o usuário sendo comparado não é o mesmo que está sendo editado.
+                    # Ou seja: se existir outro usuário com o mesmo e-mail, impede a duplicação.
+                    # "!=" significa "diferente de".
                         print("Erro: E-mail já cadastrado.")
-                        continue
-                    break
+                        continue # Se o e-mail não existir ou for igual ao usuário atual, segue o baile
+                    break # Encerra o código
 
-                try:
+                try: # Tente inserir uma nova idade 
                     nova_idade = int(input(f"Idade atual: {usuario['Idade']}. Digite a nova idade: "))
-                except ValueError:
+                except ValueError: # Erro ao digitar algo que não seja um número inteiro
                     print("Erro: Idade inválida. Digite um número inteiro.")
-                    return
+                    return # Correção ! Deveria tentar digitar a idade novamente, e não encerrar a função
 
-                novo_nivel = input(f"Nível atual: {usuario['Nivel De Conhecimento']}. Digite o novo nível: ").strip()
+                novo_nivel = input(f"Nível atual: {usuario['Nivel De Conhecimento']}. Digite o novo nível: ").strip() # Correção ! É possível digitar um nível inválido
 
                 # Atualizando os dados
                 usuario["Nome"] = novo_nome
@@ -132,7 +143,7 @@ def consultar_alterar_usuario(usuarios, chave_secreta):
                 print("Dados atualizados com sucesso.")
             return
     
-    print("Usuário não encontrado.")
+    print("Usuário não encontrado.") # Correção ! Digitar o e-mail novamente e não encerrar a função
 
 
 
@@ -495,12 +506,12 @@ def main():
         if acao == "1":
             usuario = login(usuarios_cadastrados, fernet)
             if usuario:
-                menu(usuario, usuarios_cadastrados, fernet)
+                menu(usuario, usuarios_cadastrados, chave_secreta)
         elif acao == "2":
             cadastrar_usuario(usuarios_cadastrados, chave_secreta, fernet)
 
 
-def menu(usuario, usuarios_cadastrados, fernet):
+def menu(usuario, usuarios_cadastrados, chave_secreta):
     while True:
         print("1 - Questionários")
         print("3 - Consultar/Alterar Dados")
@@ -511,11 +522,11 @@ def menu(usuario, usuarios_cadastrados, fernet):
         acao = input("Escolha uma opção: ").strip()
 
         if acao == "1":
-            escolher_disciplina(usuario, usuarios_cadastrados, fernet)
+            escolher_disciplina(usuario, usuarios_cadastrados, chave_secreta)
         elif acao == "3":
-            consultar_alterar_usuario(usuarios_cadastrados, fernet)
+            consultar_alterar_usuario(usuarios_cadastrados, chave_secreta)
         elif acao == "4":
-            inserir_desempenho(usuarios_cadastrados, fernet)
+            inserir_desempenho(usuarios_cadastrados, chave_secreta)
         elif acao == "5":
             calcular_media_idades(usuarios_cadastrados)
         elif acao == "6":
