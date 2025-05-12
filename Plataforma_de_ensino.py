@@ -1,4 +1,7 @@
 # Importando as bibliotecas json e Fernet para criptografia
+import statistics
+# Biblioteca padrão para cálculos estatísticos (média, moda, mediana)
+import statistics
 import json
 from cryptography.fernet import Fernet
 
@@ -11,9 +14,10 @@ def salvar_dados(dados, chave_secreta):
         # Converto a chave de bytes para string (base64) para poder salvar no JSON
         "chave_secreta": chave_secreta.decode()
     }
-    with open("usuarios.json", "w") as arquivo:  # Abro o arquivo no modo de escrita ("w")
+    # Abro o arquivo no modo de escrita ("w")
+    with open("usuarios.json", "w", encoding="utf-8") as arquivo:
         # Salvo os dados no JSON com indentação para melhor leitura
-        json.dump(salvar_dados, arquivo, indent=4)
+        json.dump(salvar_dados, arquivo, indent=4, ensure_ascii=False)
 
 
 # Função para carregar os dados do arquivo JSON
@@ -34,7 +38,7 @@ def carregar_dados():
     # Se o arquivo não existir, estiver corrompido ou com estrutura errada
     except (FileNotFoundError, json.JSONDecodeError, ValueError):
         # Gera nova chave de criptografia (em bytes)
-        chave_secreta = Fernet.generate_key()
+        chave_secreta = Fernet.generate_key()  # A chave é criada aqui
         return [], chave_secreta  # Retorna lista vazia de usuários e a nova chave
 # Correção ! As linhas 24, 26, 28, 29 e 30 foram criadas com o intuito de prosseguir caso o Json esteja em branco,
 # mas se o caso for outro irá apagar todos os dados sem nenhum tipo de backup
@@ -51,60 +55,89 @@ def validar_email(email):
 
 
 # Função para calcular média de idade dos usuários
-def calcular_media_idades(usuarios):
-    if not usuarios:  # Caso não tenha nenhum usuário cadastrado
-        print("")  # Espaço pra ficar bonito
-        print("Nenhum usuário cadastrado para calcular a média.")
-        return  # Cancela o processo da função
-    print("========== Média das idades ==========")
-    print("\nLista de usuários cadastrados:")
-    for usuario in usuarios:  # Para cada usuário na lista do Json
-        print(f"- {usuario['Email']}")  # Imprima o Email de cada um
 
-    # Soma as idades de todos os usuários
-    soma_idades = sum(usuario["Idade"] for usuario in usuarios)
-    # Utiliza a soma e divide pela quantidade de usuários
-    media_idades = soma_idades / len(usuarios)
+
+def calcular_estatisticas_idades(usuarios):
+    if not usuarios:  # Verifica se a lista de usuários está vazia
+        print("")  # Imprime uma linha em branco para formatação visual
+        print("Nenhum usuário cadastrado para calcular.")  # Mensagem de aviso
+        return  # Encerra a função, pois não há dados para processar
+
+    print("========== Estatísticas das idades ==========")
+    print("\nLista de usuários cadastrados:")
+    for usuario in usuarios:  # Percorre cada dicionário de usuário na lista
+        print(f"- {usuario['Email']}")  # Imprime o e-mail de cada usuário
+
+    # Cria uma lista com as idades de todos os usuários
+    idades = [usuario["Idade"] for usuario in usuarios]
+
+    # Soma todas as idades (para fins de exibição)
+    soma_idades = sum(idades)
+
+    # Calcula a média das idades
+    media_idades = statistics.mean(idades)
+
+    # Calcula a mediana (valor central quando a lista está ordenada)
+    mediana_idades = statistics.median(idades)
+
+    # Calcula a moda (idade que mais aparece na lista)
+    try:
+        moda_idades = statistics.mode(idades)
+    except statistics.StatisticsError:
+        # Caso não haja moda
+        moda_idades = "Não existe moda (todos os valores são únicos)"
+
+    # Exibe os resultados no terminal formatado
     print(f"\nTotal de usuários cadastrados: {len(usuarios)}")
     print(f"Soma das idades: {soma_idades}")
     print(f"Média das idades: {media_idades:.2f}")
-    print("======================================")  # Espaço pra ficar bonito
+    print(f"Mediana das idades: {mediana_idades}")
+    print(f"Moda das idades: {moda_idades}")
+    print("=============================================")
 
 
 # Função para calcular a média das notas de desempenho e listar logins
-def calcular_media_notas(usuarios):
-    if not usuarios:  # Se não houver usuário registrado
-        print("Nenhum usuário cadastrado para calcular a média de notas.")
-        return  # Cancela o processo da função
-    print("========== Média das notas ==========")
-    print("\nLista de usuários cadastrados:")
-    for usuario in usuarios:  # Para cada usuário na lista do Json
-        print(f"- {usuario['Email']}")  # Imprima o Email de cada um
 
-    total_notas = 0  # Variável local para o total das notas
-    qtd_notas = 0  # "" "" "" a quantidade das notas
-    usuarios_com_notas = 0  # Quantidade de usuários com notas
+
+def calcular_estatisticas_notas(usuarios):
+    if not usuarios:
+        print("Nenhum usuário cadastrado para calcular.")
+        return
+
+    print("========== Estatísticas das Notas ==========")
+    print("\nLista de usuários cadastrados:")
+    for usuario in usuarios:
+        print(f"- {usuario['Email']}")
+
+    todas_notas = []
+    usuarios_com_notas = 0
 
     for usuario in usuarios:
-        if usuario["Desempenho"]:  # Verifica se há notas registradas
-            total_notas += sum(usuario["Desempenho"])  # Soma todas as notas
-            # Quantidade de notas na lista do Json
-            qtd_notas += len(usuario["Desempenho"])
-            usuarios_com_notas += 1  # Soma +1 pra cada usuário encontrado na lista
+        if usuario["Desempenho"]:  # Verifica se há notas
+            todas_notas.extend(usuario["Desempenho"])  # Junta todas as notas
+            usuarios_com_notas += 1
 
-    if qtd_notas > 0:  # Se a quantidade das notas for maior que 0
-        # A soma das notas dividido pelo total de notas
-        media_notas = total_notas / qtd_notas
+    if todas_notas:
+        media = sum(todas_notas) / len(todas_notas)
+        mediana = statistics.median(todas_notas)
+
+        try:
+            moda = statistics.mode(todas_notas)
+        except statistics.StatisticsError:
+            moda = "Sem moda (valores igualmente frequentes)"
+
         print(f"\nTotal de usuários com notas: {usuarios_com_notas}")
-        print(f"Total de notas registradas: {qtd_notas}")
-        # :.2f Significa limitar o float a duas casas decimais
-        print(f"Soma de todas as notas: {total_notas:.2f}")
-        print(f"Média geral das notas: {media_notas:.2f}")
-        # Pra ficar bonito tb. Confia
-        print("=====================================")
+        print(f"Total de notas registradas: {len(todas_notas)}")
+        print(f"Soma de todas as notas: {sum(todas_notas):.2f}")
+        print(f"Média das notas: {media:.2f}")
+        print(f"Mediana das notas: {mediana}")
+        print(f"Moda das notas: {moda}")
+        print("===========================================")
+
+        # Se quiser gerar gráfico, os dados estão prontos em todas_notas
     else:
         print("\nNenhuma nota de desempenho registrada.")
-        print("=====================================")
+        print("===========================================")
 
 
 # Função para consultar e alterar os dados do usuário
@@ -225,105 +258,37 @@ def inserir_desempenho(usuarios, chave_secreta):
     print("Usuário não encontrado.")
 
 
-# Função para cadastrar o usuário
-# A ordem dos parâmetros de uma função devem estar iguais em todo o código.
-def cadastrar_usuario(usuarios_cadastrados, chave_secreta, fernet):
-    # Tava quebrando meus únicos dois neurônios por aqui estar "fernet, chave_secreta", fazendo com que recebesse o valor errado
-
-    nome = input("Digite seu nome: ")
-    idade = int(input("Digite sua idade: "))
-    nivel_conhecimento = input(
-        # Mudança ! Definir uma entrada válida ou padrão
-        "Digite seu Nivel De Conhecimento (iniciante, intermediário ou avançado): ").strip()
-
-    # Loop para garantir que o e-mail seja válido e único
+# Função para questionários de Programação em Python
+def escolher_disciplina(usuario, usuarios_cadastrados, chave_secreta):
     while True:
-        email = input("Digite seu e-mail: ").strip()
-        if not validar_email(email):  # Verifica se o e-mail contém '@' e '.com'
-            print("Erro: O e-mail deve conter '@' e '.com'.")
-        # Verifica se o e-mail já está cadastrado
-        elif any(user["Email"] == email for user in usuarios_cadastrados):
-            print("Erro: E-mail já cadastrado.")
-        else:
-            break  # E-mail válido e único → sai do loop
+        print("\nEscolha uma disciplina:")
+        print("1 - Estrutura de controle")
+        print("2 - Entrada e saída")
+        print("3 - Funções")
+        print("4 - Lógica em Python")
+        print("0 - Sair")
 
-    # Loop para garantir que a senha seja forte e criptografada
-    while True:
-        senha = input(
-            "Digite uma senha (mínimo 6 caracteres, 1 maiúscula e 1 número): ")
-        if validar_senha(senha):  # Verifica força da senha
-            # Criptografa a senha: transforma em bytes (encode), criptografa, e transforma de volta em string (decode)
-            # Fernet trabalha apenas em bytes (encode). Json não trabalha com bytes, por isso o (decode)
-            senha_criptografada = fernet.encrypt(senha.encode()).decode()
+        escolha = input("Digite o número da disciplina escolhida: ").strip()
+
+        if escolha == "1":
+            print("Você escolheu Estrutura de controle.")
+            questionario_estrutura(
+                usuario, usuarios_cadastrados, chave_secreta)
+        elif escolha == "2":
+            print("Você escolheu Entrada e saída.")
+            questionario_entrada_saida(
+                usuario, usuarios_cadastrados, chave_secreta)
+        elif escolha == "3":
+            print("Você escolheu Funções.")
+            questionario_funcoes(usuario, usuarios_cadastrados, chave_secreta)
+        elif escolha == "4":
+            print("Você escolheu Lógica em Python.")
+            questionario_logica(usuario, usuarios_cadastrados, chave_secreta)
+        elif escolha == "0":
+            print("Saindo da escolha de disciplinas.")
             break
         else:
-            print("Erro: Senha fraca. Deve ter 6 caracteres, 1 maiúscula e 1 número.")
-
-    # Define o tipo de usuário (Administrador ou Comum)
-    tipo_usuario = input(
-        # Mudança ! Definir algum conceito pro usuário ter o direito de ser administrador
-        "Digite o tipo de usuário (Administrador ou Comum): ").strip().capitalize()
-
-    # Se for digitado um tipo inválido, define como 'Comum' por padrão
-    if tipo_usuario not in ["Administrador", "Comum"]:
-        tipo_usuario = "Comum"
-
-    # Cria o dicionário do usuário com todas as informações
-    usuario = {
-        "Nome": nome,
-        "Email": email,
-        "Idade": idade,
-        "Nivel De Conhecimento": nivel_conhecimento,
-        "Senha": senha_criptografada,  # Senha armazenada de forma segura
-        "Tipo": tipo_usuario,
-        "Desempenho": []  # Lista vazia para armazenar futuras pontuações
-    }
-
-    # Adiciona o novo usuário à lista de usuários cadastrados
-    usuarios_cadastrados.append(usuario)
-
-    # Salva os dados atualizados em arquivo usando a chave secreta
-    salvar_dados(usuarios_cadastrados, chave_secreta)
-
-    # Mensagem final de sucesso
-    print(f"Cadastro realizado com sucesso! Bem-vindo, {nome}!")
-
-
-# Função para autenticação de login
-def login(usuarios_cadastrados, fernet):
-    # 'fernet' é o objeto usado para descriptografar a senha armazenada
-
-    # Solicita o e-mail e remove espaços extras
-    email = input("Digite seu e-mail: ").strip()
-    # Solicita a senha e remove espaços extras
-    senha = input("Digite sua senha: ").strip()
-
-    # Percorre cada usuário cadastrado na lista
-    for usuario in usuarios_cadastrados:
-        if usuario["Email"] == email:  # Verifica se o e-mail informado existe
-            # Pega a senha criptografada do usuário
-            senha_criptografada = usuario["Senha"]
-            senha_descriptografada = fernet.decrypt(
-                senha_criptografada.encode()).decode()  # Descriptografa a senha
-
-            if senha == senha_descriptografada:  # Verifica se a senha digitada está correta
-                print("Login bem-sucedido!")
-                print(f"Nome: {usuario['Nome']}")
-                print(f"Idade: {usuario['Idade']}")
-                print(f"Tipo de usuário: {usuario['Tipo']}")
-                print(f"E-mail: {usuario['Email']}")
-                print(
-                    f"Nivel De Conhecimento: {usuario['Nivel De Conhecimento']}")
-                print(f"Desempenho: {usuario['Desempenho']}")
-                return usuario  # Retorna o dicionário do usuário logado
-            else:
-                # Senha digitada não bate com a senha armazenada
-                print("Senha incorreta!")
-                return None
-
-    # Nenhum usuário com o e-mail informado foi encontrado
-    print("Email não cadastrado.")
-    return None  # Retorna None se o login falhar
+            print("Opção inválida! Tente novamente.")
 
 
 # Função para perguntas de lógica
@@ -530,40 +495,83 @@ def questionario_entrada_saida(usuario, usuarios_cadastrados, chave_secreta):
     print("Pontuação registrada com sucesso.")
 
 
-# Função para questionários de Programação em Python
-def escolher_disciplina(usuario, usuarios_cadastrados, chave_secreta):
+# Função para cadastrar o usuário
+# A ordem dos parâmetros de uma função devem estar iguais em todo o código.
+def cadastrar_usuario(usuarios_cadastrados, chave_secreta, fernet):
+    # Tava quebrando meus únicos dois neurônios por aqui estar "fernet, chave_secreta", fazendo com que recebesse o valor errado
+
+    nome = input("Digite seu nome: ")
+    idade = int(input("Digite sua idade: "))
+    niveis = {
+        "1": "Iniciante",
+        "2": "Intermediário",
+        "3": "Avançado"
+    }
     while True:
-        print("\nEscolha uma disciplina:")
-        print("1 - Estrutura de controle")
-        print("2 - Entrada e saída")
-        print("3 - Funções")
-        print("4 - Lógica em Python")
-        print("0 - Sair")
+        escolha = input(  # Mudança ! Definir uma entrada válida ou padrão. E algo em que essa informação realmente impacte no aprendizado
+            "Digite seu Nivel De Conhecimento ((1) - Iniciante, (2) - Intermediário ou (3) - Avançado): ").strip()
+        if escolha not in niveis:
+            print("Resposta inválida, escolha entre (1), (2) ou (3)")
+        else:
+            nivel_conhecimento = niveis[escolha]
+            break
 
-        escolha = input("Digite o número da disciplina escolhida: ").strip()
+    # Loop para garantir que o e-mail seja válido e único
+    while True:
+        email = input("Digite seu e-mail: ").strip()
+        if not validar_email(email):  # Verifica se o e-mail contém '@' e '.com'
+            print("Erro: O e-mail deve conter '@' e '.com'.")
+        # Verifica se o e-mail já está cadastrado
+        elif any(user["Email"] == email for user in usuarios_cadastrados):
+            print("Erro: E-mail já cadastrado.")
+        else:
+            break  # E-mail válido e único → sai do loop
 
-        if escolha == "1":
-            print("Você escolheu Estrutura de controle.")
-            questionario_estrutura(
-                usuario, usuarios_cadastrados, chave_secreta)
-        elif escolha == "2":
-            print("Você escolheu Entrada e saída.")
-            questionario_entrada_saida(
-                usuario, usuarios_cadastrados, chave_secreta)
-        elif escolha == "3":
-            print("Você escolheu Funções.")
-            questionario_funcoes(usuario, usuarios_cadastrados, chave_secreta)
-        elif escolha == "4":
-            print("Você escolheu Lógica em Python.")
-            questionario_logica(usuario, usuarios_cadastrados, chave_secreta)
-        elif escolha == "0":
-            print("Saindo da escolha de disciplinas.")
+    # Loop para garantir que a senha seja forte e criptografada
+    while True:
+        senha = input(
+            "Digite uma senha (mínimo 6 caracteres, 1 maiúscula e 1 número): ")
+        if validar_senha(senha):  # Verifica força da senha
+            # Criptografa a senha: transforma em bytes (encode), criptografa, e transforma de volta em string (decode)
+            # Fernet trabalha apenas em bytes (encode). Json não trabalha com bytes, por isso o (decode)
+            senha_criptografada = fernet.encrypt(senha.encode()).decode()
             break
         else:
-            print("Opção inválida! Tente novamente.")
+            print(
+                "Erro: Senha fraca. Deve conter 6 caracteres, sendo 1 maiúscula e 1 número.")
 
+    # Define o tipo de usuário (Administrador ou Comum)
+    tipo_usuario = input(
+        # Mudança ! Definir algum conceito pro usuário ter o direito de ser administrador
+        "Digite o tipo de usuário (Administrador ou Comum): ").strip().capitalize()
+
+    # Se for digitado um tipo inválido, define como 'Comum' por padrão
+    if tipo_usuario not in ["Administrador", "Comum"]:
+        tipo_usuario = "Comum"
+
+    # Cria o dicionário do usuário com todas as informações
+    usuario = {
+        "Nome": nome,
+        "Email": email,
+        "Idade": idade,
+        "Nivel De Conhecimento": nivel_conhecimento,
+        "Senha": senha_criptografada,  # Senha armazenada de forma segura
+        "Tipo": tipo_usuario,
+        "Desempenho": []  # Lista vazia para armazenar futuras pontuações
+    }
+
+    # Adiciona o novo usuário à lista de usuários cadastrados
+    usuarios_cadastrados.append(usuario)
+
+    # Salva os dados atualizados em arquivo usando a chave secreta
+    salvar_dados(usuarios_cadastrados, chave_secreta)
+
+    # Mensagem final de sucesso
+    print(f"Cadastro realizado com sucesso! Bem-vindo, {nome}!")
 
 # Função principal para controlar o sistema
+
+
 def main():
     # Carrega os dados dos usuários e a chave secreta do arquivo JSON
     usuarios_cadastrados, chave_secreta = carregar_dados()
@@ -574,7 +582,7 @@ def main():
     # Loop principal do programa (menu inicial)
     while True:
         print("\n========== Bem-vindo! ==========")
-        print("1 - Login")
+        print("1 - Entrar")
         print("2 - Cadastro")
 
         # Pede ao usuário para escolher entre fazer login ou se cadastrar
@@ -593,15 +601,53 @@ def main():
             cadastrar_usuario(usuarios_cadastrados, chave_secreta, fernet)
 
 
+# Função para autenticação de login
+def login(usuarios_cadastrados, fernet):
+    # 'fernet' é o objeto usado para descriptografar a senha armazenada
+
+    # Solicita o e-mail e remove espaços extras
+    email = input("Digite seu e-mail: ").strip()
+    # Solicita a senha e remove espaços extras
+    senha = input("Digite sua senha: ").strip()
+
+    # Percorre cada usuário cadastrado na lista
+    for usuario in usuarios_cadastrados:
+        if usuario["Email"] == email:  # Verifica se o e-mail informado existe
+            # Pega a senha criptografada do usuário
+            senha_criptografada = usuario["Senha"]
+            senha_descriptografada = fernet.decrypt(
+                senha_criptografada.encode()).decode()  # Descriptografa a senha
+
+            if senha == senha_descriptografada:  # Verifica se a senha digitada está correta
+                print("Entrada bem-sucedida!")
+                print(f"Nome: {usuario['Nome']}")
+                print(f"Idade: {usuario['Idade']}")
+                print(f"Tipo de usuário: {usuario['Tipo']}")
+                print(f"E-mail: {usuario['Email']}")
+                print(
+                    f"Nivel De Conhecimento: {usuario['Nivel De Conhecimento']}")
+                print(f"Desempenho: {usuario['Desempenho']}")
+                print("=====================================")
+                return usuario  # Retorna o dicionário do usuário logado
+            else:
+                # Senha digitada não bate com a senha armazenada
+                print("Senha incorreta!")
+                return None
+
+    # Nenhum usuário com o e-mail informado foi encontrado
+    print("Email não cadastrado.")
+    return None  # Retorna None se o login falhar
+
+
 # Função que exibe o menu principal após o login e executa ações conforme a escolha do usuário
 def menu(usuario, usuarios_cadastrados, chave_secreta):
     while True:
         # Exibe as opções disponíveis no menu
         print("1 - Questionários")
-        print("3 - Consultar/Alterar Dados")
-        print("4 - Inserir Desempenho")
-        print("5 - Calcular Média de Idades")
-        print("6 - Calcular Média de Notas")
+        print("2 - Consultar/Alterar Dados")
+        print("3 - Inserir Desempenho")
+        print("4 - Calcular as Estátisticas das Idades")
+        print("5 - Calcular as Estátisticas das Notas")
         print("0 - Sair")
 
         # Recebe a escolha do usuário
@@ -612,20 +658,20 @@ def menu(usuario, usuarios_cadastrados, chave_secreta):
             escolher_disciplina(usuario, usuarios_cadastrados, chave_secreta)
 
         # Opção 3: Permite consultar ou alterar dados de usuários
-        elif acao == "3":
+        elif acao == "2":
             consultar_alterar_usuario(usuarios_cadastrados, chave_secreta)
 
         # Opção 4: Permite inserir dados de desempenho dos usuários
-        elif acao == "4":
+        elif acao == "3":
             inserir_desempenho(usuarios_cadastrados, chave_secreta)
 
         # Opção 5: Calcula e exibe a média das idades cadastradas
-        elif acao == "5":
-            calcular_media_idades(usuarios_cadastrados)
+        elif acao == "4":
+            calcular_estatisticas_idades(usuarios_cadastrados)
 
         # Opção 6: Calcula e exibe a média das notas dos usuários
-        elif acao == "6":
-            calcular_media_notas(usuarios_cadastrados)
+        elif acao == "5":
+            calcular_estatisticas_notas(usuarios_cadastrados)
 
         # Opção 0: Encerra o menu e retorna ao menu principal (ou finaliza o programa)
         elif acao == "0":
@@ -641,3 +687,7 @@ def menu(usuario, usuarios_cadastrados, chave_secreta):
 # Se sim, chama a função principal que inicia o sistema
 if __name__ == "__main__":
     main()
+
+
+# Mudanças ! Incluir anonimato. Guardar com mais segurança a chave_secreta. Implementar mais algum tipo de interação educativa com o úsuario.
+# No readme.me incluir passo a passo para utilizar o programa, inclusive a instalação das bibliotecas

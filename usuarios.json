@@ -1,20 +1,72 @@
 {
-    "usuarios": {
-        "Nome": "Koi",
-        "Email": "K@gmail.com",
-        "Idade": 26,
-        "Nivel De Conhecimento": "Fuck",
-        "Senha": "gAAAAABn6rU1ChvCBO4y2OCV8RnIiov1fDsS8E2sbSFktEm_Zvo3tgI5B-M2zIXxXdjiSs1C--GmxgIrovo6gL75FgtUDVcQ3g==",
-        "Tipo": "Administrador",
-        "Desempenho": [
-            25.0,
-            10.0,
-            4,
-            10.1,
-            5.0,
-            10.0,
-            1.0
-        ]
-    },
-    "chave_secreta": "1MfoACBOrhdK5PBifu4hGGp9RLS5m1Si3fAQ67ffc7E="
+    "usuarios": [
+        {
+            "Nome": "Koi",
+            "Email": "K@gmail.com",
+            "Idade": 19,
+            "Nivel De Conhecimento": "fuck",
+            "Senha": "gAAAAABoIhGiFZXEkwjdYcG3ao-eQqNMoyu8SlI2FV5_nLJml1uhho7m_KFNCYvi8ovV8KClILn26mbdmjCIPay6qYsZULXw6A==",
+            "Tipo": "Comum",
+            "Desempenho": [
+                4
+            ]
+        },
+        {
+            "Nome": "Kk",
+            "Email": "kk@gmail.com",
+            "Idade": 20,
+            "Nivel De Conhecimento": "fuck",
+            "Senha": "gAAAAABoIhJkCZ9vKauxK46W0K81DpS2MFXtvqGcIh7WH_CA1Wieibk7xe0803emuIEFFy9a1NQ9V32ij_r6txH2J78FFg2y8w==",
+            "Tipo": "Comum",
+            "Desempenho": [
+                3,
+                4
+            ]
+        },
+        {
+            "Nome": "kii",
+            "Email": "ki@gmail.com",
+            "Idade": 19,
+            "Nivel De Conhecimento": "iniciante",
+            "Senha": "gAAAAABoIiofpuDVf0CzlXb2FwycsrLul701FdA12y3c6AO4wVRKvj6VpY45OuoMbNQfRundXsfzIIu7cQe0ZpAdfhNyLqVy_Q==",
+            "Tipo": "Comum",
+            "Desempenho": []
+        },
+        {
+            "Nome": "ko",
+            "Email": "ko@gmail.com",
+            "Idade": 22,
+            "Nivel De Conhecimento": {
+                "1": "Iniciante",
+                "2": "Intermedi\u00e1rio",
+                "3": "Avan\u00e7ado"
+            },
+            "Senha": "gAAAAABoIi2ZkPgX-9VJhuFif96L3cXM6FojHB8IfT9MzCK09GyqwlDRXs8cZ3NdfRjemcgc7u9eovAYKhNYceYBmW5RkdWuFg==",
+            "Tipo": "Comum",
+            "Desempenho": []
+        },
+        {
+            "Nome": "kkk",
+            "Email": "kkk@gmail.com",
+            "Idade": 18,
+            "Nivel De Conhecimento": {
+                "1": "Iniciante",
+                "2": "Intermedi\u00e1rio",
+                "3": "Avan\u00e7ado"
+            },
+            "Senha": "gAAAAABoIi4SxC58v7SruUYp5BpgXdE3-zHUzzrphut3nRFW7Ws0Ye73XWPrjpI_CTTP4YA9xuIW33TO0rcySU4BcSwihbYEzA==",
+            "Tipo": "Comum",
+            "Desempenho": []
+        },
+        {
+            "Nome": "ao",
+            "Email": "ao@gmail.com",
+            "Idade": 16,
+            "Nivel De Conhecimento": "Iniciante",
+            "Senha": "gAAAAABoIi4vyWcYpRA8eAdRTLyVhRZWkuUT0zszyv5ETQaT13k4oSo19Cq73avL27aelF_XHa76NJcwczFyB9B94h7tRwriyw==",
+            "Tipo": "Comum",
+            "Desempenho": []
+        }
+    ],
+    "chave_secreta": "rRR0MRmsCfs0HhlJRwi_UkxiFwAjIB_pdCAmRJxUqew="
 }
