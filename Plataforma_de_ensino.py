@@ -1,7 +1,6 @@
-# Importando as bibliotecas json e Fernet para criptografia
-import statistics
 # Biblioteca padrão para cálculos estatísticos (média, moda, mediana)
 import statistics
+# Biblietocas json e Fernet para criptografia
 import json
 from cryptography.fernet import Fernet
 
@@ -690,4 +689,4 @@ if __name__ == "__main__":
 
 
 # Mudanças ! Incluir anonimato. Guardar com mais segurança a chave_secreta. Implementar mais algum tipo de interação educativa com o úsuario.
-# No readme.me incluir passo a passo para utilizar o programa, inclusive a instalação das bibliotecas
+# No readme.me incluir passo a passo para utilizar o programa, inclusive a instalação das bibliotecas (criptography and dotenv)
